@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://example.com/img/wz7.jpg">
 <meta property="article:published_time" content="2023-02-16T06:15:20.000Z">
-<meta property="article:modified_time" content="2023-02-16T06:33:54.034Z">
+<meta property="article:modified_time" content="2023-02-16T06:43:51.582Z">
 <meta property="article:author" content="k4d0n">
 <meta property="article:tag" content="原创">
 <meta name="twitter:card" content="summary_large_image">
@@ -309,15 +309,21 @@
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">People</span> &#123;<br>    <span class="hljs-keyword">private</span> <span class="hljs-type">String</span> <span class="hljs-variable">name</span> <span class="hljs-operator">=</span> <span class="hljs-string">&quot;Arsene.Tang&quot;</span>;<br>    <span class="hljs-keyword">private</span> <span class="hljs-type">int</span> <span class="hljs-variable">age</span> <span class="hljs-operator">=</span> <span class="hljs-number">18</span>;<br>    <span class="hljs-keyword">public</span> String <span class="hljs-title function_">getName</span><span class="hljs-params">()</span> &#123;<br>        <span class="hljs-keyword">return</span> name;<br>    &#125;<br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">setName</span><span class="hljs-params">(String name)</span> &#123;<br>        <span class="hljs-built_in">this</span>.name = name;<br>    &#125;<br>    <span class="hljs-keyword">public</span> <span class="hljs-type">int</span> <span class="hljs-title function_">getAge</span><span class="hljs-params">()</span>&#123;<br>        <span class="hljs-keyword">return</span> age;<br>    &#125;<br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">setAge</span><span class="hljs-params">(<span class="hljs-type">int</span> age)</span>&#123;<br>        <span class="hljs-built_in">this</span>.age = age;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
 
 <p>​	这就是一个很简单的JavaBean而在commons-beanutils中就提供了一种静态方法，可以让使用者直接调用到任意JavaBean对象中的getter方法，这个方法属实就很危险，它就是PropertyUtils.getProperty，用法也很简单，只有两个参数，前面是JavaBean对象，后面是想要获取的方法名，比如说：PropertyUtils.getProperty(people,”name”)，看看完整的代码：</p>
-<p><img src="E:\github\hexo-blog\source_posts\CommonsBeanutils链\Image.png" srcset="/img/loading.gif" lazyload alt="Image1"></p>
+<img src="/2023/02/16/CommonsBeanutils%E9%93%BE/pc1.png" srcset="/img/loading.gif" lazyload class="" title="pc1">
+
 <p>​	这样就成功调用到了people对象的getName()和getAge()方法并且PropertyUtils.getProperty 还支持递归获取属性，比如a对象中有属性b，b对象中有属性c，我们可以通过 PropertyUtils.getProperty(a, “b.c”); 的方式进行递归获取，这样就可以很方便的调用任意对象的getter方法，适用于在不确定JavaBean是哪个类对象时使用</p>
 <p>递归获取属性例子：</p>
 <p>Alien类</p>
-<p><img src="E:\github\hexo-blog\source_posts\CommonsBeanutils链\Image-1676528442161.png" srcset="/img/loading.gif" lazyload alt="Image"></p>
+<img src="/2023/02/16/CommonsBeanutils%E9%93%BE/pc2.png" srcset="/img/loading.gif" lazyload class="" title="pc2">
+
 <p>People类</p>
-<p><img src="E:\github\hexo-blog\source_posts\CommonsBeanutils链\Image-1676528451420.png" srcset="/img/loading.gif" lazyload alt="Image"></p>
+<img src="/2023/02/16/CommonsBeanutils%E9%93%BE/pc3.png" srcset="/img/loading.gif" lazyload class="" title="pc3">
+
 <p>Bean_demo</p>
-<p><img src="E:\github\hexo-blog\source_posts\CommonsBeanutils链\Image-1676528459424.png" srcset="/img/loading.gif" lazyload alt="Image"></p>
+<img src="/2023/02/16/CommonsBeanutils%E9%93%BE/pc4.png" srcset="/img/loading.gif" lazyload class="" title="pc4">
+
+
+
 <h1 id="利用链分析"><a href="#利用链分析" class="headerlink" title="利用链分析"></a>利用链分析</h1><p>​	我们在Java动态加载字节码中讲到了用TemplatesImpl类动态加载，一层一层的往上，推到了调用newTransformer()方法，然后慢慢往下调最终调用defineClass()加载字节码；其实在newTransformer()方法之前，还有一个方法可以调用到newTransformer()方法，而且它也是public类型，它就是getOutputProperties()方法，看看源码吧：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">synchronized</span> Properties <span class="hljs-title function_">getOutputProperties</span><span class="hljs-params">()</span> &#123;<br>        <span class="hljs-keyword">try</span> &#123;<br>            <span class="hljs-keyword">return</span> newTransformer().getOutputProperties();<br>        &#125;<br>        <span class="hljs-keyword">catch</span> (TransformerConfigurationException e) &#123;<br>            <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;<br>        &#125;<br>    &#125;<br></code></pre></td></tr></table></figure>
 
@@ -354,17 +360,24 @@
 
 
 <h1 id="动态调试"><a href="#动态调试" class="headerlink" title="动态调试"></a>动态调试</h1><p>exp通过反射修改了queue的值</p>
-<p><img src="E:\github\hexo-blog\source_posts\CommonsBeanutils链\Image-1676528969804.png" srcset="/img/loading.gif" lazyload alt="Image"></p>
-<p><img src="E:\github\hexo-blog\source_posts\CommonsBeanutils链\Image-1676528984910.png" srcset="/img/loading.gif" lazyload alt="Image"></p>
+<img src="/2023/02/16/CommonsBeanutils%E9%93%BE/pc5.png" srcset="/img/loading.gif" lazyload class="" title="pc5">
+
+<img src="/2023/02/16/CommonsBeanutils%E9%93%BE/pc6.png" srcset="/img/loading.gif" lazyload class="" title="pc6">
+
 <p>跟进siftDown:<br>x为我们的TemplatesImpl</p>
-<p><img src="E:\github\hexo-blog\source_posts\CommonsBeanutils链\Image-1676528997750.png" srcset="/img/loading.gif" lazyload alt="Image"></p>
+<img src="/2023/02/16/CommonsBeanutils%E9%93%BE/pc7.png" srcset="/img/loading.gif" lazyload class="" title="pc7">
+
 <p>把我们TemplatesImpl传入了compare</p>
-<p><img src="E:\github\hexo-blog\source_posts\CommonsBeanutils链\Image-1676529009788.png" srcset="/img/loading.gif" lazyload alt="Image"></p>
+<img src="/2023/02/16/CommonsBeanutils%E9%93%BE/pc8.png" srcset="/img/loading.gif" lazyload class="" title="pc8">
+
 <p>此时o1 , o2都是我们的恶意对象property也是我们想要调用的方法</p>
-<p><img src="E:\github\hexo-blog\source_posts\CommonsBeanutils链\Image-1676529020253.png" srcset="/img/loading.gif" lazyload alt="Image"></p>
-<p><img src="E:\github\hexo-blog\source_posts\CommonsBeanutils链\Image-1676529028450.png" srcset="/img/loading.gif" lazyload alt="Image"></p>
+<img src="/2023/02/16/CommonsBeanutils%E9%93%BE/pc9.png" srcset="/img/loading.gif" lazyload class="" title="pc9">
+
+<img src="/2023/02/16/CommonsBeanutils%E9%93%BE/pc10.png" srcset="/img/loading.gif" lazyload class="" title="pc10">
+
 <p>最后成功调用getOutputProperties：</p>
-<p><img src="E:\github\hexo-blog\source_posts\CommonsBeanutils链\Image-1676529040332.png" srcset="/img/loading.gif" lazyload alt="Image"></p>
+<img src="/2023/02/16/CommonsBeanutils%E9%93%BE/pc11.png" srcset="/img/loading.gif" lazyload class="" title="pc11">
+
 <p>后面的就和TemplatesImpl链一样，就不分析了。</p>
 
                 
